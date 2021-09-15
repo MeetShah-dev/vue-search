@@ -89,7 +89,6 @@ export default {
 
   watch: {
     model(val) {
-      console.log(val);
       if (val != null) {
         const selectedUser = this.items.filter(
           (item) => item[this.selectedField] === val
@@ -102,14 +101,13 @@ export default {
 
       // Lazily load input items
       try {
-        let res = await fetch(
+        let res = await this.$axios.get(
           `http://localhost:4000/users?${this.selectedField}_like=${val}&_page=1&_limit=10`
         );
-        res = await res.clone().json();
-        this.items = res;
+        this.items = res.data;
         this.$emit("user-post", this.items);
       } catch (err) {
-        console.log(err);
+        console.log(err.response.data);
       } finally {
         this.isLoading = false;
       }
